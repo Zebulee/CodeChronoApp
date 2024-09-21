@@ -19,6 +19,9 @@ class CodeChronoApp(CodeChronoUI):
         self.english_action.triggered.connect(lambda: self.change_language('en'))
         self.french_action.triggered.connect(lambda: self.change_language('fr'))
 
+        # Définir l'état initial (par exemple, français par défaut)
+        self.change_language('fr')
+
     # Fonction pour capturer le code-barres et ajouter un timestamp
     def scan_code(self):
         scanned_code = self.entry.text()
@@ -46,11 +49,17 @@ class CodeChronoApp(CodeChronoUI):
         if lang == 'fr':
             self.label.setText("Scannez le code-barres :")
             self.export_button.setText("Exporter en CSV")
-            self.language_menu.actions()[0].setText("Français")
-            self.language_menu.actions()[1].setText("English")
+            self.language_menu.actions()[0].setText("Anglais")
+            self.language_menu.actions()[1].setText("Français")
+
+            self.french_action.setDisabled(True)
+            self.english_action.setDisabled(False)
         else:
             self.label.setText("Scan Barcode:")
             self.export_button.setText("Export to CSV")
             self.language_menu.actions()[0].setText("English")
-            self.language_menu.actions()[1].setText("Français")
+            self.language_menu.actions()[1].setText("French")
+
+            self.english_action.setDisabled(True)
+            self.french_action.setDisabled(False)
 
