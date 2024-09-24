@@ -1,5 +1,5 @@
 
-from PyQt6.QtWidgets import QMessageBox
+from PyQt6.QtWidgets import QMessageBox, QFileDialog
 from ui.codechronoui import CodeChronoUI
 from datetime import datetime
 import pandas as pd
@@ -27,12 +27,15 @@ class CodeChronoApp(CodeChronoUI):
         scanned_code = self.entry.text()
         timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
-        if scanned_code:
-            scanned_data.append((scanned_code, timestamp))
-            self.entry.clear()
-            QMessageBox.information(self, "Scanned", f"Code-barres scanné : {scanned_code} à {timestamp}")
+        if scanned_code and len(scanned_code) == 7:
+            # Vérifier si le code-barres est déjà scanné (vérification des doublons)
+            if any(scanned_code == code for code, _ in scanned_data):
+                QMessageBox.warning(self, "Erreur", "Le code-barres est déjà scanné.")
+            else:
+                scanned_data.append((scanned_code, timestamp))
+                self.entry.clear()
         else:
-            QMessageBox.warning(self, "Erreur", "Le champ est vide, veuillez scanner un code-barres.")
+            QMessageBox.warning(self, "Erreur", "Le code-barres est invalide")
 
     # Fonction pour exporter les données en CSV
     def export_data(self):
@@ -40,9 +43,16 @@ class CodeChronoApp(CodeChronoUI):
             QMessageBox.warning(self, "Erreur", "Aucune donnée à exporter.")
             return
 
-        df = pd.DataFrame(scanned_data, columns=["Code-barres", "Timestamp"])
-        df.to_csv('codes_scannes.csv', index=False)
-        QMessageBox.information(self, "Exportation réussie", "Les données ont été exportées vers 'codes_scannes.csv'.")
+        # Ouvrir une boîte de dialogue pour sélectionner l'emplacement de sauvegarde
+        file_path, _ = QFileDialog.getSaveFileName(self, "Enregistrer sous", "", "CSV Files (*.csv);;All Files (*)")
+
+        # Vérifier si l'utilisateur a sélectionné un fichier
+        if file_path:
+            formatted_data = [(f"{code[:3]}-{code[3:]}", timestamp) for code, timestamp in scanned_data]
+            # Exporter les données en CSV
+            df = pd.DataFrame(formatted_data, columns=["Code étudiant", "Timestamp"])
+            df.to_csv(file_path, index=False)
+            QMessageBox.information(self, "Exportation réussie", f"Les données ont été exportées vers '{file_path}'.")
 
     # Fonction pour changer la langue
     def change_language(self, lang):
