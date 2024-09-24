@@ -1,6 +1,6 @@
 
 from PyQt6.QtWidgets import QMessageBox, QFileDialog
-from ui.codechronoui import CodeChronoUI
+from logic.codechronoui import CodeChronoUI
 from datetime import datetime
 import pandas as pd
 

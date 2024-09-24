@@ -1,6 +1,7 @@
 from PyQt6.QtWidgets import QMainWindow, QWidget, QLabel, QLineEdit, QPushButton, QVBoxLayout, QMenuBar
 from PyQt6.QtGui import QAction
 
+
 class CodeChronoUI(QMainWindow):
     def __init__(self):
         super().__init__()
