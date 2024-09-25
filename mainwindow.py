@@ -3,6 +3,12 @@ import tkinter as tk
 from tkinter import PhotoImage, messagebox
 from pages.presence import PresenceApp  # Import the logic from presence.py
 
+
+def relative_to_assets(folder: str, filename: str) -> str:
+    """Helper function to get the assets path."""
+    return os.path.join( "assets", folder, filename)
+
+
 class MainWindow:
     def __init__(self, root):
         self.root = root
@@ -19,14 +25,14 @@ class MainWindow:
         self.canvas.create_text(1194/2, 112.0, anchor="center", text="CodeChrono - Barcode Scanner", fill="#000000", font=("Roboto", 57 * -1))
 
         # Load button images
-        self.button_image_1 = PhotoImage(file=self.relative_to_assets("mainwindow", "button_1.png"))
-        self.button_image_hover_1 = PhotoImage(file=self.relative_to_assets("mainwindow", "button_hover_1.png"))
+        self.button_image_1 = PhotoImage(file=relative_to_assets("mainwindow", "button_1.png"))
+        self.button_image_hover_1 = PhotoImage(file=relative_to_assets("mainwindow", "button_hover_1.png"))
 
-        self.button_image_2 = PhotoImage(file=self.relative_to_assets("mainwindow", "button_2.png"))
-        self.button_image_hover_2 = PhotoImage(file=self.relative_to_assets("mainwindow", "button_hover_2.png"))
+        self.button_image_2 = PhotoImage(file=relative_to_assets("mainwindow", "button_2.png"))
+        self.button_image_hover_2 = PhotoImage(file=relative_to_assets("mainwindow", "button_hover_2.png"))
 
-        self.button_image_3 = PhotoImage(file=self.relative_to_assets("mainwindow", "button_3.png"))
-        self.button_image_hover_3 = PhotoImage(file=self.relative_to_assets("mainwindow", "button_hover_3.png"))
+        self.button_image_3 = PhotoImage(file=relative_to_assets("mainwindow", "button_3.png"))
+        self.button_image_hover_3 = PhotoImage(file=relative_to_assets("mainwindow", "button_hover_3.png"))
 
         # Create buttons
         self.presenceButton = tk.Button(image=self.button_image_1, borderwidth=0, highlightthickness=0, relief="flat", command=self.open_presence)
@@ -49,10 +55,6 @@ class MainWindow:
         self.reservationButton.bind('<Enter>', self.button_3_hover)
         self.reservationButton.bind('<Leave>', self.button_3_leave)
 
-    def relative_to_assets(self, folder: str, filename: str) -> str:
-        """Helper function to get the assets path."""
-        return os.path.join( "assets", folder, filename)
-
     # Hover effects for buttons
     def button_1_hover(self, e):
         self.presenceButton.config(image=self.button_image_hover_1)
@@ -74,9 +76,9 @@ class MainWindow:
 
     # Function to open the PresenceApp (scan logic)
     def open_presence(self):
-        self.root.withdraw()  # Hide the main window
+        #self.root.withdraw()  # Hide the main window
         presence_window = tk.Toplevel(self.root)
-        presence_app = PresenceApp(presence_window)
+        PresenceApp(presence_window)
 
     # Function to open the ReservationApp
     def open_reservation(self):

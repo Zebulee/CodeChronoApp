@@ -8,6 +8,31 @@ from tktimepicker import SpinTimePickerModern, constants
 # Global scanned data for barcode tracking
 scanned_data = []
 
+
+def relative_to_assets(folder: str, filename: str) -> str:
+    """Helper function to get the assets path."""
+    # Get the absolute path of the current directory (where presence.py is located)
+    base_path = os.path.abspath(os.path.dirname(__file__))
+
+    # Traverse up one directory to reach the project root, then access assets
+    assets_path = os.path.join(base_path, "..", "assets", folder, filename)
+
+    return os.path.normpath(assets_path)  # Normalize the path to handle ".."
+
+
+def export_data():
+    if not scanned_data:
+        messagebox.showwarning("Erreur", "Aucune donnée à exporter.")
+        return
+
+    file_path = filedialog.asksaveasfilename(defaultextension=".csv", filetypes=[("CSV Files", "*.csv"), ("All Files", "*.*")])
+    if file_path:
+        formatted_data = [(f"{code[:3]}-{code[3:]}", timestamp) for code, timestamp in scanned_data]
+        df = pd.DataFrame(formatted_data, columns=["Code-barres", "Timestamp"])
+        df.to_csv(file_path, index=False)
+        messagebox.showinfo("Exportation réussie", f"Les données ont été exportées vers '{file_path}'.")
+
+
 class PresenceApp:
     def __init__(self, root):
         self.root = root
@@ -56,19 +81,19 @@ class PresenceApp:
 
         # Entry for barcode input
         self.entry_barcode_Image = PhotoImage(
-            file=self.relative_to_assets("presence", "entry_1.png"))
+            file=relative_to_assets("presence", "entry_1.png"))
         self.canvas.create_image(
             813.0,
             222.0,
             image=self.entry_barcode_Image
         )
-        entry_barcode = Entry(
+        self.entry_barcode = Entry(
             bd=0,
             bg="#D9D9D9",
             fg="#000716",
             highlightthickness=0
         )
-        entry_barcode.place(
+        self.entry_barcode.place(
             x=514.0,
             y=200.0,
             width=598.0,
@@ -107,7 +132,7 @@ class PresenceApp:
         )
 
         entry_image_3 = PhotoImage(
-            file=self.relative_to_assets("presence","entry_3.png"))
+            file=relative_to_assets("presence", "entry_3.png"))
         self.canvas.create_image(
             714.0,
             430.0,
@@ -136,7 +161,7 @@ class PresenceApp:
         )
 
         entry_image_4 = PhotoImage(
-            file=self.relative_to_assets("presence","entry_4.png"))
+            file=relative_to_assets("presence", "entry_4.png"))
         self.canvas.create_image(
             631.0,
             578.5,
@@ -165,17 +190,17 @@ class PresenceApp:
         )
 
         # Load button images
-        self.button_image_1 = PhotoImage(file=self.relative_to_assets("presence","button_1.png"))
-        self.button_image_hover_1 = PhotoImage(file=self.relative_to_assets("presence", "button_hover_1.png"))
+        self.button_image_1 = PhotoImage(file=relative_to_assets("presence", "button_1.png"))
+        self.button_image_hover_1 = PhotoImage(file=relative_to_assets("presence", "button_hover_1.png"))
 
-        self.button_image_2 = PhotoImage(file=self.relative_to_assets("presence", "button_2.png"))
-        self.button_image_hover_2 = PhotoImage(file=self.relative_to_assets("presence", "button_hover_2.png"))
+        self.button_image_2 = PhotoImage(file=relative_to_assets("presence", "button_2.png"))
+        self.button_image_hover_2 = PhotoImage(file=relative_to_assets("presence", "button_hover_2.png"))
 
-        self.button_image_3 = PhotoImage(file=self.relative_to_assets("presence", "button_3.png"))
-        self.button_image_hover_3 = PhotoImage(file=self.relative_to_assets("presence", "button_hover_3.png"))
+        self.button_image_3 = PhotoImage(file=relative_to_assets("presence", "button_3.png"))
+        self.button_image_hover_3 = PhotoImage(file=relative_to_assets("presence", "button_hover_3.png"))
 
-        self.button_image_4 = PhotoImage(file=self.relative_to_assets("presence", "button_4.png"))
-        self.button_image_hover_4 = PhotoImage(file=self.relative_to_assets("presence", "button_hover_4.png"))
+        self.button_image_4 = PhotoImage(file=relative_to_assets("presence", "button_4.png"))
+        self.button_image_hover_4 = PhotoImage(file=relative_to_assets("presence", "button_hover_4.png"))
 
         # Create buttons
         self.setTimeButton = tk.Button(image=self.button_image_1, borderwidth=0, highlightthickness=0, relief="flat",
@@ -187,7 +212,7 @@ class PresenceApp:
         self.omnivoxButton.place(x=626.0, y=681.0, width=540.0, height=110.0)
 
         self.exportDataButton = tk.Button(image=self.button_image_3, borderwidth=0, highlightthickness=0, relief="flat",
-                                          command=self.export_data)
+                                          command=export_data)
         self.exportDataButton.place(x=43.0, y=681.0, width=540.0, height=110.0)
 
         self.viewDataButton = tk.Button(image=self.button_image_4, borderwidth=0, highlightthickness=0,
@@ -207,16 +232,6 @@ class PresenceApp:
 
         self.viewDataButton.bind('<Enter>', self.button_4_hover)
         self.viewDataButton.bind('<Leave>', self.button_4_leave)
-
-    def relative_to_assets(self, folder: str, filename: str) -> str:
-        """Helper function to get the assets path."""
-        # Get the absolute path of the current directory (where presence.py is located)
-        base_path = os.path.abspath(os.path.dirname(__file__))
-
-        # Traverse up one directory to reach the project root, then access assets
-        assets_path = os.path.join(base_path, "..", "assets", folder, filename)
-
-        return os.path.normpath(assets_path)  # Normalize the path to handle ".."
 
     # Hover effects for buttons
 
@@ -246,13 +261,13 @@ class PresenceApp:
 
     # Logic for scanning the barcode
     def scan_code(self):
-        scanned_code = self.entry_barcode_Image.get()
+        scanned_code = self.entry_barcode.get()
 
         if len(scanned_code) == 7:  # Only accept 7-digit barcodes
             if not any(scanned_code == code for code, _ in scanned_data):
                 timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                 scanned_data.append((scanned_code, timestamp))
-                self.entry_barcode_Image.delete(0, tk.END)
+                self.entry_barcode.delete(0, tk.END)
                 messagebox.showinfo("Scanned", f"Code-barres scanné : {scanned_code} à {timestamp}")
             else:
                 messagebox.showwarning("Erreur", "Le code-barres est déjà scanné.")
@@ -260,20 +275,9 @@ class PresenceApp:
             messagebox.showwarning("Erreur", "Le code-barres doit contenir exactement 7 caractères.")
 
     # Logic for exporting scanned data to CSV
-    def export_data(self):
-        if not scanned_data:
-            messagebox.showwarning("Erreur", "Aucune donnée à exporter.")
-            return
-
-        file_path = filedialog.asksaveasfilename(defaultextension=".csv", filetypes=[("CSV Files", "*.csv"), ("All Files", "*.*")])
-        if file_path:
-            formatted_data = [(f"{code[:3]}-{code[3:]}", timestamp) for code, timestamp in scanned_data]
-            df = pd.DataFrame(formatted_data, columns=["Code-barres", "Timestamp"])
-            df.to_csv(file_path, index=False)
-            messagebox.showinfo("Exportation réussie", f"Les données ont été exportées vers '{file_path}'.")
 
     def export_omnivox(self):
-        return self.export_data()
+        return export_data()
 
     def set_Time(self):
         return datetime.now().strftime('%Y-%m-%d %H:%M:%S')
