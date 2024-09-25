@@ -1,4 +1,4 @@
-from logic.logic_codechrono import CodeChronoApp
+from logic_old.logic_codechrono import CodeChronoApp
 from PyQt6.QtWidgets import QApplication
 import sys
 
