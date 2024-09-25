@@ -10,14 +10,14 @@ def relative_to_assets(folder: str, filename: str) -> str:
 
 
 class MainWindow:
-    def __init__(self, root):
-        self.root = root
-        self.root.geometry("1194x834")
-        self.root.configure(bg="#FFFFFF")
-        self.root.title("CodeChrono - Presence Scanning")
+    def __init__(self, master):
+        self.master = master
+        self.master.geometry("1194x834")
+        self.master.configure(bg="#FFFFFF")
+        self.master.title("CodeChrono - Presence Scanning")
 
         # Canvas and layout
-        self.canvas = tk.Canvas(self.root, bg="#FFFFFF", height=834, width=1194, bd=0, highlightthickness=0, relief="ridge")
+        self.canvas = tk.Canvas(self.master, bg="#FFFFFF", height=834, width=1194, bd=0, highlightthickness=0, relief="ridge")
         self.canvas.place(x=0, y=0)
 
         self.canvas.create_text(20.0, 0.0, anchor="nw", text="Menu", fill="#000000", font=("Roboto", 28 * -1))
@@ -77,7 +77,7 @@ class MainWindow:
     # Function to open the PresenceApp (scan logic)
     def open_presence(self):
         #self.root.withdraw()  # Hide the main window
-        presence_window = tk.Toplevel(self.root)
+        presence_window = tk.Toplevel(self.master)
         PresenceApp(presence_window)
 
     # Function to open the ReservationApp
@@ -88,7 +88,7 @@ class MainWindow:
 
     # Function to quit the application
     def quit_app(self):
-        self.root.quit()
+        self.master.quit()
 
 # Main function to run the app
 if __name__ == "__main__":

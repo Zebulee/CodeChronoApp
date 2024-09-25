@@ -33,17 +33,17 @@ def export_data():
         messagebox.showinfo("Exportation réussie", f"Les données ont été exportées vers '{file_path}'.")
 
 
-class PresenceApp:
-    def __init__(self, root):
-        self.root = root
-        self.root.geometry("1194x834")
-        self.root.configure(bg="#FFFFFF")
-        self.root.title("CodeChrono - Presence Scanning")
+class PresenceApp():
+    def __init__(self, master):
+        self.master = master
+        self.master.geometry("1194x834")
+        self.master.configure(bg="#FFFFFF")
+        self.master.title("CodeChrono - Presence Scanning")
 
         #TDOO: change font menubar
         # Create a menu bar
-        menubar = Menu(self.root)
-        self.root.config(menu=menubar)
+        menubar = Menu(self.master)
+        self.master.config(menu=menubar)
 
         # Create a "File" menu with a "Return to Menu" option
         file_menu = Menu(menubar, tearoff=0)
@@ -52,7 +52,7 @@ class PresenceApp:
 
         # Canvas and layout
         self.canvas = Canvas(
-            self.root,
+            self.master,
             bg="#FFFFFF",
             height=834,
             width=1194,
@@ -109,7 +109,7 @@ class PresenceApp:
             font=("Roboto", 36 * -1)
         )
 
-        time_picker = SpinTimePickerModern(self.root)
+        time_picker = SpinTimePickerModern(self.master)
         time_picker.addAll(constants.HOURS24)  # adds hours clock, minutes and period
         time_picker.configureAll(bg="#404040", height=1, fg="#ffffff", font=("Roboto", 36 * -1), hoverbg="#404040",
                                  hovercolor="#d73333", clickedbg="#2e2d2d", clickedcolor="#d73333")
@@ -188,7 +188,11 @@ class PresenceApp:
             fill="#000000",
             font=("Roboto", 36 * -1)
         )
+        self.load_buttons()
 
+
+
+    def load_buttons(self):
         # Load button images
         self.button_image_1 = PhotoImage(file=relative_to_assets("presence", "button_1.png"))
         self.button_image_hover_1 = PhotoImage(file=relative_to_assets("presence", "button_hover_1.png"))
@@ -216,9 +220,9 @@ class PresenceApp:
         self.exportDataButton.place(x=43.0, y=681.0, width=540.0, height=110.0)
 
         self.viewDataButton = tk.Button(image=self.button_image_4, borderwidth=0, highlightthickness=0,
-                                          relief="flat",
-                                          command=self.view_data)
-        self.viewDataButton.place( x=776.0, y=518.0, width=390.0, height=110.0)
+                                        relief="flat",
+                                        command=self.view_data)
+        self.viewDataButton.place(x=776.0, y=518.0, width=390.0, height=110.0)
 
         # Bind hover events to buttons
         self.setTimeButton.bind('<Enter>', self.button_1_hover)
@@ -234,7 +238,6 @@ class PresenceApp:
         self.viewDataButton.bind('<Leave>', self.button_4_leave)
 
     # Hover effects for buttons
-
     def button_1_hover(self, e):
         self.setTimeButton.config(image=self.button_image_hover_1)
 
@@ -287,11 +290,7 @@ class PresenceApp:
 
     # Function to go back to the main window
     def back_to_main(self):
-        self.root.destroy()  # Close the presence window
-        main_window = tk.Toplevel(self.root)
+        self.master.destroy()  # Close the presence window
+        main_window = tk.Toplevel(self.master)
         #main_app = MainWindow(main_window)  # Reopen the main window
 
-if __name__ == "__main__":
-    root = tk.Tk()
-    app = PresenceApp(root)
-    root.mainloop()
