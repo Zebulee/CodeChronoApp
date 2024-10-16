@@ -1,0 +1,3 @@
+[submodule "libusb-package"]
+	path = libusb-package
+	url = git@github.com:pyocd/libusb-package.git
