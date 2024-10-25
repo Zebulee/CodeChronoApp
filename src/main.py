@@ -6,7 +6,13 @@ import os
 
 os.environ['PYUSB_DEBUG'] = 'debug'
 
-be = libusb1.get_backend(find_library=lambda x: "libusb\\libusb-1.0.dll")
+# Determine the absolute path of the current script
+current_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Construct the absolute path to the libusb DLL in your project folder
+libusb_path = os.path.join(current_dir, '..', 'libusb', 'libusb-1.0.dll')
+
+be = libusb1.get_backend(find_library=lambda x: libusb_path)
 
 def lire_code_barre():
     # Trouver le périphérique USB correspondant (scanner de code-barres)
