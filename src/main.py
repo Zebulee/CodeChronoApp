@@ -1,21 +1,21 @@
 import usb.core
 import usb.util
+from usb.backend import libusb1
 import sys
+import os
+
+os.environ['PYUSB_DEBUG'] = 'debug'
+
+be = libusb1.get_backend(find_library=lambda x: "libusb\\libusb-1.0.dll")
 
 def lire_code_barre():
     # Trouver le périphérique USB correspondant (scanner de code-barres)
-    device = usb.core.find(idVendor=0, idProduct=0)  # Remplacez avec l'ID du fabricant et du produit
+    device = usb.core.find(backend=be, find_all=True)  # Remplacez avec l'ID du fabricant et du produit¸
+    print(device)
 
     if device is None:
         print("Scanner de code-barres non trouvé.")
         sys.exit(1)
-
-    # Détachez l'appareil du noyau si nécessaire (Linux uniquement)
-    if device.is_kernel_driver_active(0):
-        try:
-            device.detach_kernel_driver(0)
-        except usb.core.USBError as e:
-            sys.exit(f"Impossible de détacher le périphérique : {str(e)}")
 
     # Configurer l'appareil pour interagir
     device.set_configuration()
