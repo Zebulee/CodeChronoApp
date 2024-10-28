@@ -1,23 +1,32 @@
+import csv
+import datetime
 import usb.core
 import usb.util
 from usb.backend import libusb1
 import sys
 import os
 
-os.environ['PYUSB_DEBUG'] = 'debug'
+from keyboardVal import decode_hid_keycode
 
-# Determine the absolute path of the current script
+# Construct the path to the libusb DLL
 current_dir = os.path.dirname(os.path.abspath(__file__))
-
-# Construct the absolute path to the libusb DLL in your project folder
-libusb_path = os.path.join(current_dir, '..', 'libusb', 'libusb-1.0.dll')
-
+libusb_path = os.path.normpath(os.path.join(current_dir, os.pardir, 'DLLs', 'libusb-1.0.dll'))
 be = libusb1.get_backend(find_library=lambda x: libusb_path)
+
+# Stockage de la liste et de celui en cours
+barcode_characters = []
+list_barcodes = []
+
+def save_to_csv(filename='Liste_code.csv'):
+    with open(filename, mode='w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(['Barcode', 'Time'])  # Header
+        for barcode, time in list_barcodes:
+            writer.writerow([barcode, time])
 
 def lire_code_barre():
     # Trouver le périphérique USB correspondant (scanner de code-barres)
-    device = usb.core.find(backend=be, find_all=True)  # Remplacez avec l'ID du fabricant et du produit¸
-    print(device)
+    device = usb.core.find(backend=be,idVendor=0xe851, idProduct=0x1000)  # ID Scanner
 
     if device is None:
         print("Scanner de code-barres non trouvé.")
@@ -48,13 +57,26 @@ def lire_code_barre():
                 # Lire les données du scanner
                 data = device.read(endpoint.bEndpointAddress, endpoint.wMaxPacketSize)
                 # Convertir les données reçues en code-barres
-                code_barre = ''.join([chr(x) for x in data if x > 0])
-                print(f"Code-barres reçu : {code_barre}")
+                keycode = data[2]
+                if keycode > 0:
+                    character = decode_hid_keycode(keycode)
+                    if character == 'ENTER':
+                        # Ajouter le code-barres scanné à la liste.
+                        if barcode_characters:
+                            complete_barcode = ''.join(barcode_characters)
+                            timestamp = datetime.datetime.now().strftime('%H:%M:%S')
+                            list_barcodes.append((complete_barcode, timestamp))
+                            print(f"Code Scanné: {complete_barcode} at {timestamp}")
+                            barcode_characters.clear()  # Effacer le tampon pour le prochain code-barres.
+                    else:
+                        # Accumuler les caractères pour le code-barres en cours.
+                        barcode_characters.append(character)
             except usb.core.USBError as e:
                 if e.args == ('Operation timed out',):
                     continue
     except KeyboardInterrupt:
         print("\nArrêt de l'application.")
+        save_to_csv()
         sys.exit(0)
 
 if __name__ == "__main__":
