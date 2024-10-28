@@ -1,58 +1,24 @@
-import socketio
+import requests
 
-# Initialiser un client Socket.IO
-sio = socketio.Client()
+# URL de base du serveur
+BASE_URL = 'http://localhost:3001'
 
-# Variables pour les données à envoyer
-course_name = 'Physique Avancée'
-course_id = 1
-group_name = 'Groupe B'
-group_id = 2
-session_date = '2024-10-27'
-session_id = 1
-barcode = '9876543210987'
+# Créer un nouveau cours si n'existe pas
+def create_course(course_code):
+    response = requests.post(f'{BASE_URL}/courses', json={'course_name': course_code})
+    print('Réponse pour le cours :', response.json())
 
-# Connexion au serveur WebSocket
-sio.connect('http://localhost:3001')
+# Créer un nouveau groupe si n'existe pas
+def create_group(course_code, group_name):
+    response = requests.post(f'{BASE_URL}/groups', json={'course_id': course_code, 'group_name': group_name})
+    print('Réponse pour le groupe :', response.json())
 
-# Gérer la connexion
-@sio.event
-def connect():
-    print('Connecté au serveur WebSocket')
+# Envoyer une nouvelle scéance
+def create_session(course_code, group_name, session_date):
+    response = requests.post(f'{BASE_URL}/sessions', json={'course_id': course_code, 'group_id': group_name, 'session_date': session_date})
+    print('Réponse pour la session :', response.json())
 
-    # Exemple d'envoi de données en utilisant des variables
-    # Envoyer un nouveau cours
-    sio.emit('add_data', {
-        'type': 'add_course',
-        'course_name': course_name
-    })
-
-    # Envoyer un nouveau groupe
-    sio.emit('add_data', {
-        'type': 'add_group',
-        'course_id': course_id,
-        'group_name': group_name
-    })
-
-    # Envoyer une nouvelle session
-    sio.emit('add_data', {
-        'type': 'add_session',
-        'course_id': course_id,
-        'group_id': group_id,
-        'session_date': session_date
-    })
-
-    # Envoyer un code scanné
-    sio.emit('add_data', {
-        'type': 'add_scanned_code',
-        'session_id': session_id,
-        'barcode': barcode
-    })
-
-# Gérer la déconnexion
-@sio.event
-def disconnect():
-    print('Déconnecté du serveur WebSocket')
-
-# Maintenir la connexion ouverte
-sio.wait()
+# Envoyer un code scanné
+def send_scanned_code(session_date, barcode):
+    response = requests.post(f'{BASE_URL}/scanned_codes', json={'session_date': session_date, 'barcode': barcode})
+    print('Réponse pour le code scanné :', response.json())
