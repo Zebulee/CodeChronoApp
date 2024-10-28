@@ -10,19 +10,21 @@ from keyboardVal import decode_hid_keycode
 
 # Construct the path to the libusb DLL
 current_dir = os.path.dirname(os.path.abspath(__file__))
-libusb_path = os.path.normpath(os.path.join(current_dir, os.pardir, 'DLLs', 'libusb-1.0.dll'))
+libusb_path = os.path.normpath(os.path.join(current_dir, 'libusb', 'libusb-1.0.dll'))
 be = libusb1.get_backend(find_library=lambda x: libusb_path)
 
 # Stockage de la liste et de celui en cours
 barcode_characters = []
 list_barcodes = []
 
-def save_to_csv(filename='Liste_code.csv'):
+def save_to_csv(filename):
     with open(filename, mode='w', newline='') as file:
         writer = csv.writer(file)
         writer.writerow(['Barcode', 'Time'])  # Header
         for barcode, time in list_barcodes:
             writer.writerow([barcode, time])
+            
+
 
 def lire_code_barre():
     # Trouver le périphérique USB correspondant (scanner de code-barres)
@@ -76,8 +78,12 @@ def lire_code_barre():
                     continue
     except KeyboardInterrupt:
         print("\nArrêt de l'application.")
-        save_to_csv()
+        save_to_csv(filename)
         sys.exit(0)
 
 if __name__ == "__main__":
+    class_code = input("Entrer le sigle du cours (ex: 420-ASU-OS): ")
+    group_code = input("Entrer le numéro du groupe (ex: 01)): ")
+    class_code = class_code.replace('-', '_')
+    filename = class_code + group_code + '.csv'
     lire_code_barre()
