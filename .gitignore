@@ -184,5 +184,5 @@ fabric.properties
 .idea/caches/build_file_checksums.ser
 
 # Test project stuff
+*.csv
 .vscode
-Liste_code.csv
