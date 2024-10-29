@@ -59,7 +59,7 @@ def lire_code_barre():
         print("Point d'accès de lecture non trouvé.")
         sys.exit(1)
 
-    print("Scanner de code-barres prêt. Scannez un code-barres...")
+    print("Scanner de code-barres prêt. Utiliser CTRL + C pour quitter l'application...")
 
     try:
         while True:
