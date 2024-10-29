@@ -12,4 +12,8 @@ CodeChrono est une application de scanner de codes-barres, avec horodatage et ex
 
 - Scanner des codes-barres avec un horodatage.
 - Exporter les données scannées au format CSV.
-- Interface utilisateur en anglais et français.
+- Interface utilisateur en français.
+
+## Futur
+
+- Connexion avec un site web pour stocké les codes-barres scanné.
