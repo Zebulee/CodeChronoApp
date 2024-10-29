@@ -5,6 +5,7 @@ import usb.util
 from usb.backend import libusb1
 import sys
 import os
+from tkinter import Tk, filedialog
 
 from connection import create_course, create_group, create_session, send_scanned_code
 from keyboardVal import decode_hid_keycode
@@ -19,12 +20,17 @@ barcode_characters = []
 list_barcodes = []
 session_date = datetime.now().date()
 
-def save_to_csv(filename):
-    with open(filename, mode='w', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerow(['Barcode', 'Time'])  # Header
-        for barcode, time in list_barcodes:
-            writer.writerow([barcode, time])
+def save_to_csv():
+    root = Tk()
+    root.withdraw()
+    filename = filedialog.asksaveasfilename(defaultextension=".csv", filetypes=[("CSV files", "*.csv")])
+    if filename:
+        with open(filename, mode='w', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow(['Barcode', 'Time'])  # Header
+            for barcode, time in list_barcodes:
+                writer.writerow([barcode, time])          
+    root.destroy() 
             
 
 
