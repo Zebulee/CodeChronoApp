@@ -31,8 +31,6 @@ def save_to_csv():
             for barcode, time in list_barcodes:
                 writer.writerow([barcode, time])          
     root.destroy() 
-            
-
 
 def lire_code_barre():
     # Trouver le périphérique USB correspondant (scanner de code-barres)

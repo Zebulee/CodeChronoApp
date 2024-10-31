@@ -36,7 +36,8 @@ def install_driver():
         if not detect_usb_device():
             raise Exception("Le Scanner n'est pas connecté")
 
-        os.system('%windir%\\system32\\PNPUTIL.exe -i -a \\tera\\2D_Barcode_Scanner.inf')
+        #continue and install driver in InstallForge
+        #PNPUTIL /add-driver <InstallPath>\scanner\tera\2D_Barcode_Scanner.inf /install
 
     except Exception as e:
         print(e)
