@@ -4,8 +4,6 @@ import usb.util
 import os
 from usb.backend import libusb1
 
-os.environ['PYUSB_DEBUG'] = 'debug'
-
 # Determine the absolute path of the current script
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
