@@ -85,7 +85,7 @@ def lire_code_barre():
                     continue
     except KeyboardInterrupt:
         print("\nArrêt de l'application.")
-        save_to_csv(filename)
+        save_to_csv()
         sys.exit(0)
 
 if __name__ == "__main__":
